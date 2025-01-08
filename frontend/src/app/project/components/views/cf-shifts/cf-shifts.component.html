@@ -1,0 +1,134 @@
+<!-- CALENDAR -->
+<section *ngIf="this.page_status == 'Calendar'">
+    <header class="page_padding">
+        <div class="goBack" (click)="this.router.navigate([''])"><i class="fa-solid fa-arrow-left"></i></div>
+        <h1>Horari</h1>
+    </header>
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color"></div>
+            <p>Festius</p>
+        </div>
+    </div>
+    <div class="month">
+        <div  class="calendar-header">
+            <i class="fa-solid fa-caret-left" (click)="changeMonth(-1)"></i>
+            <div>
+                <h3>{{this.month.name}}</h3>
+                <p>{{this.month.year}}</p>
+            </div>
+            <i class="fa-solid fa-caret-right" (click)="changeMonth(1)"></i>
+        </div>
+        <div class="days-header">
+            <div class="day-name" *ngFor="let d of this.dayNames">{{d}}</div>
+        </div>
+        <div class="days">
+            <div class="day" *ngFor="let d of this.month.days" (click)="editDay(d)">
+                <p [ngClass]="{'holiday':d.holiday}">{{d.number}}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DAY EDIT -->
+<section *ngIf="this.page_status == 'Edit'">
+    <div class="day-edit-header page_padding">
+        <h3 name="number">{{this.day.number}}</h3>
+        <div>
+            <p>{{this.getMonthName(this.day.month)}}</p>
+            <label>{{this.day.year}}</label>
+        </div>
+    </div>
+    <nav>
+        <h5 
+          #horari
+          class="horari active"
+          (click)="horari.classList.add('active');
+            regles.classList.remove('active');
+            festiu.classList.remove('active')"
+        >Horari</h5>
+        <h5
+          #festiu 
+          class="festiu"
+          (click)="horari.classList.remove('active');
+            regles.classList.remove('active');
+            festiu.classList.add('active')"
+        >Festiu</h5>
+        <h5 
+          #regles
+          class="regles"
+          (click)="regles.classList.add('active');
+            horari.classList.remove('active');
+            festiu.classList.remove('active')"
+        >Regles</h5>
+    </nav>
+    <!-- HORARI -->
+    <div class="timetable">
+        <div class="shifts">
+            <div
+              #shift
+              class="shift"
+              *ngFor="let s of [].constructor(25);let i = index;"
+              (click)="selectDay(shift)"
+            >
+                <label *ngIf="i.toString().length < 2">0</label>{{i}}:00
+            </div>
+        </div>
+        <div class="actions">
+            <button class="shift-goback" (click)="shiftRollback()"><i class="fa-solid fa-left-long"></i></button>
+            <button class="shift-remove" (click)="removeShiftTimes(null)"><i class="fa-solid fa-trash"></i></button>
+        </div>
+    </div>
+    <form class="page_padding">
+        <p>Si no marques cap casella es modificarà l'horari de tots els dies laborables que no tinguin un horari especific establert.</p>
+        <div class="inline" *ngIf="horari.classList.contains('active')">
+            <p>Horari laborables</p>
+            <div class="checkbox">
+                <div class="switch">
+                    <input type="radio" name="herency" recurrent-type="all">
+                </div>
+            </div>
+        </div>
+        <div class="inline">
+            <p>Aplicar només per aquest día</p>
+            <div class="checkbox">
+                <div class="switch">
+                    <input type="radio" name="herency" recurrent-type="date" checked>
+                </div>
+            </div>
+        </div>
+        <div class="inline">
+            <div>
+                <p>Aplicar anualment</p>
+                <label>S'aplicarà a tots els {{this.day.number}} de {{this.getMonthName(this.day.month)}}</label>
+            </div>
+            <div class="checkbox">
+                <div class="switch">
+                    <input type="radio" name="herency" recurrent-type="year">
+                </div>
+            </div>
+        </div>
+        <div class="inline">
+            <div>
+                <p>Aplicar semanalment</p>
+                <label>S'aplicarà a tots els "{{this.day.week}}"</label>
+            </div>
+            <div class="checkbox">
+                <div class="switch">
+                    <input type="radio" name="herency" recurrent-type="week">
+                </div>
+            </div>
+        </div>
+        <div class="buttons">
+            <button type="button" class="secondary-btn" (click)="this.page_status='Calendar'">Cancelar</button>
+            <button type="button" class="main-btn" #btn_updateDaySchedule (click)="updateDaySchedule(btn_updateDaySchedule)">Guardar</button>
+        </div>
+    </form>
+    <div class="error hide">Has de marcar una opció</div>
+    <div *ngIf="regles.classList.contains('active')" class="page_padding rule-list">
+        <div *ngFor="let r of this.rules" class="rule">
+            <p>{{r}}</p>
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+    </div>
+</section>

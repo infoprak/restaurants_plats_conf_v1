@@ -1,0 +1,32 @@
+<header class="page_padding">
+    <div class="goBack" (click)="this.router.navigate([''])"><i class="fa-solid fa-arrow-left"></i></div>
+    <h1>Llistat de comandes</h1>
+</header>
+<section class="page_padding">
+    <div class="filters">
+        <select #sel (change)="filterDates(sel.value)">
+            <option *ngFor="let d of this.dates">{{d}}</option>
+        </select>
+    </div>
+    <ul #ul>
+        <li class="header">
+            <p>Nom</p>
+            <p>Telefon</p>
+            <p>Torn</p>
+            <p>Plats</p>
+            <p>Preu</p>
+        </li>
+        <li *ngFor="let o of this.orders" #li (click)="showLineDetails(ul, li)">
+            <div class="header">
+                <p>{{o.name}}</p>
+                <p>{{o.phone}}</p>
+                <p>{{o.time}}</p>
+                <p>{{o.plates.length}}</p>
+                <p>{{o.total}}€</p>
+            </div>
+            <div *ngFor="let p of o.plates" class="plate">
+                {{p.plate_name}}
+            </div>
+        </li>
+    </ul>
+</section>

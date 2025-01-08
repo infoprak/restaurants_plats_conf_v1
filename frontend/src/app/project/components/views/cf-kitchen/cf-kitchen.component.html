@@ -1,0 +1,41 @@
+<header class="page_padding">
+    <div class="goBack" (click)="this.router.navigate([''])"><i class="fa-solid fa-arrow-left"></i></div>
+    <h1>Comandes</h1>
+</header>
+<div class="order-list">
+    <div class="order" *ngFor="let o of this.orders">
+        <div class="head">
+            <p name="important">{{o.time}}</p>
+            <p>{{o.name}}</p>
+            <p>{{o.phone}}</p>
+            <button
+              class="validate"
+              *ngIf="o.state == 1"
+              (click)="archiveOrder(o)"
+            ><i class="fa-solid fa-check"></i></button>
+        </div>
+        <div
+          #line
+          class="line_list"
+          *ngFor="let p of o.plates"
+        >
+          <div class="line" [ngClass]="{'done':p.state == 'Fet'}">
+            <p>{{p.plate_name}}</p>
+            <button 
+              *ngIf="p.state != 'Fet'"
+              (click)="nextState(p, o)"
+            >{{getNextState(p.state)}}</button>
+          </div>
+          <ng-container *ngIf="p.state != 'Fet'">
+            <ng-container *ngFor="let e of this.p.extras">
+              <div class="subline" *ngIf="e.extra">
+                <p>{{e.extra}}</p>
+              </div>
+            </ng-container>
+            <div class="subline" *ngIf="p.description">
+              <p>{{p.description}}</p>
+            </div>
+          </ng-container>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+<header class="page_padding">
+    <div 
+      class="goBack" 
+      (click)="this.page_state=='Default' ? this.router.navigate(['']) : this.page_state='Default'"
+    ><i class="fa-solid fa-arrow-left"></i></div>
+    <h1>Editar menu</h1>
+</header>
+
+<!-- ALL PLATES VIEW -->
+<div class="plat-list page_padding" *ngIf="this.page_state == 'Default'">
+
+    <div class="languages">
+        <select #sel_main_language (change)="this.filterPlates(sel_main_language.value)">
+            <option *ngFor="let i of this.languages">{{i.abr}}</option>
+        </select>
+    </div>
+    <button class="add-plate" (click)="this.page_state='Create'"><i class="fa-solid fa-plus"></i></button>
+    <div class="plat" *ngFor="let p of this.plates">
+        <div class="details">
+            <img [src]="p.image" alt="">
+            <div class="labels">
+                <div class="label" *ngFor="let l of p.labels">
+                    <i [ngClass]="l.icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="description">
+            <h4>{{p.name_lang}}</h4>
+            <p>{{p.description_lang}}</p>
+            <b>{{p.preu}} €</b>
+        </div>
+        <div class="actions">
+            <button (click)="editPlate(p)"><i class="fa-solid fa-pencil"></i></button>
+            <button (click)="removePlate(p)"><i class="fa-solid fa-trash"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT ONE PLATE VIEW -->
+<div class="plate-edit page_padding" *ngIf="this.page_state == 'Edit'">
+    <div class="img-box">
+        <img id="img" [src]="this.plate.image" alt="Selecciona una imatge" #img />
+        <input type="file" #input_change_img (change)="changeImage(input_change_img, img, $event)">
+    </div>
+    <label>Etiquetes</label>
+    <div class="label-list">
+        <p class="label" *ngFor="let l of this.plate.labels">
+            {{l.name}}
+            <b (click)="removeLabel(l)"><i class="fa-solid fa-xmark"></i></b>
+        </p>        
+        <select #sel (change)="addLabel(sel.value); sel.value = 'Afegir'">
+            <option>Afegir</option>
+            <option *ngFor="let l of notUsedLabels()">{{l.name}}</option>
+        </select>
+    </div>
+    <div class="languages plate">
+        <select #sel_language (change)="this.loadTexts(sel_language)">
+            <option *ngFor="let i of this.languages">{{i.abr}}</option>
+        </select>
+    </div>
+    <div class="input-box">
+        <label>Nom</label>
+        <div class="texts name">
+            <p>{{this.plate.name}}</p>
+            <input 
+              #input 
+              type="text"
+              [attr.value]="this.plate_translations.name"
+              (change)="updateContent('name', input)"
+            />
+        </div>
+    </div>
+    <div class="input-box">
+        <label>Descripció</label>
+        <div class="texts description">
+            <p name="textarea">{{this.plate.description}}</p>
+            <textarea 
+              #textarea
+              type="text"
+              (change)="updateContent('description', textarea)"
+            ></textarea>
+        </div>
+    </div>
+    <div class="input-box">
+        <label>Preu</label>
+        <input type="number" [attr.value]="this.plate.preu" #price/>
+    </div>
+    <div class="edit-actions">
+        <button (click)="this.page_state='Default'">Cancelar</button>
+        <button class="main-btn" (click)="updatePlate(price.value)">Guardar</button>
+    </div>
+</div>
+
+<!-- CREATE PLATE VIEW -->
+<div class="plate-edit page_padding" *ngIf="this.page_state == 'Create'">
+    <div class="img-box">
+        <img id="img" [src]="this.plate.image" alt="Selecciona una imatge" #img />
+        <input type="file" #input_change_img (change)="changeImage(input_change_img, img, $event)">
+    </div>
+
+    <div class="input-box">
+        <label>Nom</label>
+        <div class="texts name">
+            <input
+              #input
+              type="text"
+              style="width:200%;"
+            />
+        </div>
+    </div>
+    <div class="input-box">
+        <label>Descripció</label>
+        <div class="texts description" style="grid-template-columns: 1fr; width: 100%;">
+            <textarea 
+              #textarea
+              type="text"
+            ></textarea>
+        </div>
+    </div>
+    <div class="input-box">
+        <label>Preu</label>
+        <input type="number" #price/>
+    </div>
+    <div class="edit-actions">
+        <button (click)="this.page_state='Default'">Cancelar</button>
+        <button class="main-btn" (click)="createPlate(input.value, textarea.value, price.value)">Crear</button>
+    </div>
+</div>
